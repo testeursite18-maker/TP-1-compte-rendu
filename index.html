@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#141414">
     <title>Compte Rendu TP1 - Swethan KALAIRANGAN</title>
@@ -22,73 +22,64 @@
             box-sizing: border-box;
         }
         
-        body {
+        html, body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background: var(--netflix-dark);
             color: white;
-            height: 100vh;
+            height: 100%;
             overflow: hidden;
-            position: relative;
+            touch-action: pan-x pan-y;
         }
         
-        /* Header Netflix Style */
+        /* Header */
         #header {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
-            height: 80px;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.9) 10%, transparent);
+            height: 85px;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.7) 60%, transparent);
             z-index: 1000;
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 0 4%;
-            transition: all 0.4s;
+            transition: all 0.3s;
         }
         
         #header.scrolled {
-            background: var(--netflix-dark);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
-            height: 70px;
+            background: rgba(20,20,20,0.98);
+            backdrop-filter: blur(10px);
+            height: 75px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
         }
         
-        /* Section Gauche : Logo + Info */
         .header-left {
             display: flex;
             flex-direction: column;
             gap: 2px;
         }
         
-        /* Logo Netflix Style */
         .logo {
             font-family: 'Bebas Neue', sans-serif;
-            font-size: 2.2rem;
+            font-size: 2.4rem;
             color: var(--netflix-red);
             text-transform: uppercase;
             letter-spacing: 1px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-            line-height: 1;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+            line-height: 0.9;
             text-decoration: none;
-            display: inline-block;
-            transition: transform 0.2s;
         }
         
-        .logo:hover {
-            transform: scale(1.02);
-        }
-        
-        /* Info Étudiant Style */
         .student-info {
-            font-family: 'Inter', sans-serif;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             color: var(--netflix-light-gray);
             font-weight: 400;
             letter-spacing: 0.5px;
-            margin-top: 2px;
+            margin-top: 4px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
         
         .student-name {
@@ -98,8 +89,7 @@
         
         .student-id {
             color: #737373;
-            font-size: 0.8rem;
-            font-weight: 300;
+            font-size: 0.85rem;
         }
         
         .separator {
@@ -107,12 +97,61 @@
             font-weight: bold;
         }
         
-        /* Bouton Download Netflix Style */
+        /* Controls (Zoom + Download) */
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .zoom-controls {
+            display: flex;
+            align-items: center;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+        
+        .zoom-btn {
+            background: transparent;
+            border: none;
+            color: white;
+            width: 36px;
+            height: 36px;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .zoom-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .zoom-btn:active {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .zoom-level {
+            color: white;
+            font-size: 13px;
+            font-weight: 600;
+            min-width: 50px;
+            text-align: center;
+            padding: 0 8px;
+            border-left: 1px solid rgba(255,255,255,0.1);
+            border-right: 1px solid rgba(255,255,255,0.1);
+        }
+        
         .netflix-btn {
             background: var(--netflix-red);
             color: white;
             border: none;
-            padding: 10px 24px;
+            padding: 10px 20px;
             border-radius: 4px;
             font-weight: 600;
             font-size: 14px;
@@ -122,59 +161,56 @@
             align-items: center;
             gap: 8px;
             transition: all 0.2s;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
             white-space: nowrap;
+            box-shadow: 0 4px 12px rgba(229,9,20,0.3);
         }
         
         .netflix-btn:hover {
             background: #f40612;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(229,9,20,0.3);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(229,9,20,0.4);
         }
         
-        .netflix-btn:active {
-            transform: translateY(0);
-        }
-        
-        /* Container Principal */
+        /* Container PDF */
         #viewer-container {
-            margin-top: 80px;
+            margin-top: 0;
             width: 100%;
-            height: calc(100vh - 80px);
-            background: var(--netflix-dark);
+            height: 100vh;
+            background: #0f0f0f;
+            overflow: auto;
             position: relative;
-            overflow: hidden;
+            cursor: grab;
         }
         
-        /* Zone PDF */
+        #viewer-container:active {
+            cursor: grabbing;
+        }
+        
         #pdf-wrapper {
-            width: 100%;
-            height: 100%;
-            overflow-y: auto;
-            overflow-x: hidden;
-            -webkit-overflow-scrolling: touch;
-            padding: 30px 20px;
+            min-height: 100%;
+            padding: 100px 20px 50px 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            background: linear-gradient(to bottom, #1a1a1a 0%, var(--netflix-dark) 100%);
+            gap: 30px;
+            transform-origin: top center;
+            transition: transform 0.1s ease-out;
         }
         
         .pdf-page {
-            margin-bottom: 25px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
             background: white;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
             border-radius: 4px;
             overflow: hidden;
-            max-width: 100%;
-            transition: transform 0.3s ease;
+            flex-shrink: 0;
+            transition: box-shadow 0.3s;
         }
         
         .pdf-page:hover {
-            transform: scale(1.005);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.9);
         }
         
-        /* Loading Netflix Style */
+        /* Loading */
         #loading {
             position: fixed;
             top: 50%;
@@ -182,15 +218,17 @@
             transform: translate(-50%, -50%);
             text-align: center;
             z-index: 2000;
+            pointer-events: none;
         }
         
         .netflix-spinner {
-            width: 50px;
-            height: 50px;
-            border: 3px solid rgba(229,9,20,0.3);
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(229,9,20,0.2);
             border-radius: 50%;
             border-top-color: var(--netflix-red);
-            animation: spin 1s ease-in-out infinite;
+            border-right-color: var(--netflix-red);
+            animation: spin 0.8s linear infinite;
             margin: 0 auto 20px;
         }
         
@@ -201,11 +239,11 @@
         .loading-text {
             color: var(--netflix-light-gray);
             font-size: 14px;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
             text-transform: uppercase;
         }
         
-        /* Message Erreur */
+        /* Error */
         #error {
             display: none;
             position: fixed;
@@ -219,58 +257,43 @@
             max-width: 90%;
             box-shadow: 0 20px 60px rgba(0,0,0,0.8);
             border: 1px solid #333;
+            z-index: 2000;
         }
         
-        #error h3 {
-            color: white;
-            margin-bottom: 15px;
-            font-size: 1.5rem;
-        }
-        
-        #error p {
-            color: var(--netflix-light-gray);
-            margin-bottom: 25px;
-            line-height: 1.5;
-        }
-        
-        /* Responsive Mobile */
+        /* Mobile */
         @media (max-width: 768px) {
             #header {
-                height: 70px;
-                padding: 0 4%;
-            }
-            
-            #header.scrolled {
-                height: 60px;
+                height: 75px;
+                padding: 0 3%;
             }
             
             .logo {
-                font-size: 1.6rem;
+                font-size: 1.8rem;
             }
             
             .student-info {
-                font-size: 0.7rem;
+                font-size: 0.75rem;
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 0;
-                line-height: 1.3;
+                gap: 2px;
+                margin-top: 2px;
             }
             
             .separator {
                 display: none;
             }
             
-            .student-id {
-                font-size: 0.65rem;
+            .zoom-controls {
+                transform: scale(0.9);
             }
             
-            #viewer-container {
-                margin-top: 70px;
-                height: calc(100vh - 70px);
+            .zoom-level {
+                min-width: 40px;
+                font-size: 12px;
             }
             
             .netflix-btn {
-                padding: 8px 16px;
+                padding: 8px 14px;
                 font-size: 13px;
             }
             
@@ -279,13 +302,15 @@
             }
             
             #pdf-wrapper {
-                padding: 20px 10px;
+                padding: 90px 10px 30px 10px;
+                gap: 20px;
             }
         }
         
-        /* Scrollbar style Netflix */
+        /* Scrollbar */
         ::-webkit-scrollbar {
-            width: 10px;
+            width: 12px;
+            height: 12px;
         }
         
         ::-webkit-scrollbar-track {
@@ -293,22 +318,17 @@
         }
         
         ::-webkit-scrollbar-thumb {
-            background: #333;
-            border-radius: 5px;
+            background: #444;
+            border-radius: 6px;
+            border: 2px solid var(--netflix-dark);
         }
         
         ::-webkit-scrollbar-thumb:hover {
-            background: #444;
+            background: #666;
         }
         
-        /* Animation */
-        .fade-in {
-            animation: fadeIn 0.6s ease-out;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        ::-webkit-scrollbar-corner {
+            background: var(--netflix-dark);
         }
     </style>
 </head>
@@ -316,7 +336,7 @@
 
     <header id="header">
         <div class="header-left">
-            <a href="#" class="logo">Compte Rendu TP1</a>
+            <div class="logo">Compte Rendu TP1</div>
             <div class="student-info">
                 <span class="student-name">KALAIRANGAN Swethan</span>
                 <span class="separator">•</span>
@@ -324,26 +344,34 @@
             </div>
         </div>
         
-        <a href="TP 1 compte rendu.pdf" download class="netflix-btn">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                <polyline points="7 10 12 15 17 10"></polyline>
-                <line x1="12" y1="15" x2="12" y2="3"></line>
-            </svg>
-            <span>Télécharger</span>
-        </a>
+        <div class="header-controls">
+            <div class="zoom-controls">
+                <button class="zoom-btn" onclick="changeZoom(-0.2)" title="Zoom arrière">−</button>
+                <div class="zoom-level" id="zoom-text">100%</div>
+                <button class="zoom-btn" onclick="changeZoom(0.2)" title="Zoom avant">+</button>
+            </div>
+            
+            <a href="TP 1 compte rendu.pdf" download class="netflix-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                <span>Télécharger</span>
+            </a>
+        </div>
     </header>
 
     <div id="loading">
         <div class="netflix-spinner"></div>
-        <div class="loading-text">Chargement...</div>
+        <div class="loading-text">Chargement</div>
     </div>
 
     <div id="error">
-        <h3>Oups ! Impossible d'afficher le document</h3>
-        <p>Vérifiez que le fichier "TP 1 compte rendu.pdf" est présent</p>
-        <a href="TP 1 compte rendu.pdf" download class="netflix-btn" style="display: inline-flex;">
-            Télécharger le PDF
+        <h3>Erreur de chargement</h3>
+        <p>Vérifiez que le fichier PDF est présent</p>
+        <a href="TP 1 compte rendu.pdf" download class="netflix-btn" style="display: inline-flex; margin-top: 15px;">
+            Télécharger
         </a>
     </div>
 
@@ -352,77 +380,148 @@
     </div>
 
     <script>
-        // Config PDF.js
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
         
         const pdfUrl = 'TP 1 compte rendu.pdf';
         const wrapper = document.getElementById('pdf-wrapper');
+        const container = document.getElementById('viewer-container');
         const loading = document.getElementById('loading');
         const error = document.getElementById('error');
         const header = document.getElementById('header');
+        const zoomText = document.getElementById('zoom-text');
+        
+        let currentZoom = 1.0;
+        let baseScale = 2.0; // Scale de base plus grand (anciennement 1.3)
+        let pdfDoc = null;
         
         // Détection mobile
         const isMobile = window.innerWidth < 768;
-        const scale = isMobile ? 1.6 : 1.3;
+        if (isMobile) {
+            baseScale = 2.2; // Encore plus grand sur mobile
+        }
         
-        // Effet header au scroll
-        wrapper.addEventListener('scroll', () => {
-            if (wrapper.scrollTop > 30) {
+        // Header scroll effect
+        container.addEventListener('scroll', () => {
+            if (container.scrollTop > 50) {
                 header.classList.add('scrolled');
             } else {
                 header.classList.remove('scrolled');
             }
         });
         
+        // Fonction de zoom
+        function changeZoom(delta) {
+            currentZoom += delta;
+            if (currentZoom < 0.5) currentZoom = 0.5;
+            if (currentZoom > 3.0) currentZoom = 3.0;
+            
+            updateZoom();
+        }
+        
+        function updateZoom() {
+            wrapper.style.transform = `scale(${currentZoom})`;
+            zoomText.textContent = Math.round(currentZoom * 100) + '%';
+            
+            // Ajuster le padding pour éviter les coupures
+            const newPadding = 100 / currentZoom;
+            wrapper.style.paddingTop = (90 / currentZoom) + 'px';
+            wrapper.style.paddingBottom = (50 / currentZoom) + 'px';
+        }
+        
+        // Zoom avec la molette (Ctrl+scroll)
+        container.addEventListener('wheel', (e) => {
+            if (e.ctrlKey || e.metaKey) {
+                e.preventDefault();
+                const delta = e.deltaY > 0 ? -0.1 : 0.1;
+                changeZoom(delta);
+            }
+        });
+        
         // Chargement PDF
         pdfjsLib.getDocument(pdfUrl).promise.then(function(pdf) {
+            pdfDoc = pdf;
             loading.style.display = 'none';
             
             const numPages = pdf.numPages;
             
             for (let pageNum = 1; pageNum <= numPages; pageNum++) {
-                pdf.getPage(pageNum).then(function(page) {
-                    const viewport = page.getViewport({ scale: scale });
-                    
-                    const canvas = document.createElement('canvas');
-                    canvas.className = 'pdf-page fade-in';
-                    const context = canvas.getContext('2d');
-                    
-                    canvas.height = viewport.height;
-                    canvas.width = viewport.width;
-                    
-                    if (isMobile) {
-                        canvas.style.width = '98%';
-                        canvas.style.height = 'auto';
-                    } else {
-                        canvas.style.width = 'auto';
-                        canvas.style.maxWidth = '95%';
-                        canvas.style.maxHeight = '82vh';
-                    }
-                    
-                    const renderContext = {
-                        canvasContext: context,
-                        viewport: viewport
-                    };
-                    
-                    page.render(renderContext);
-                    wrapper.appendChild(canvas);
-                }).catch(err => {
-                    console.error('Erreur page', pageNum, err);
-                });
+                renderPage(pageNum);
             }
         }).catch(function(err) {
-            console.error('Erreur PDF:', err);
+            console.error('Erreur:', err);
             loading.style.display = 'none';
             error.style.display = 'block';
         });
         
-        // Touch events iOS
-        document.addEventListener('touchmove', function(e) {
-            if (e.target.closest('#pdf-wrapper')) {
-                e.stopPropagation();
+        function renderPage(pageNum) {
+            pdfDoc.getPage(pageNum).then(function(page) {
+                const viewport = page.getViewport({ scale: baseScale });
+                
+                const canvas = document.createElement('canvas');
+                canvas.className = 'pdf-page';
+                const context = canvas.getContext('2d');
+                
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+                
+                // CSS pour la taille d'affichage
+                canvas.style.width = viewport.width + 'px';
+                canvas.style.height = viewport.height + 'px';
+                canvas.style.maxWidth = 'none'; // Permet le dépassement pour zoom
+                
+                const renderContext = {
+                    canvasContext: context,
+                    viewport: viewport
+                };
+                
+                page.render(renderContext);
+                wrapper.appendChild(canvas);
+            });
+        }
+        
+        // Double-tap pour zoom sur mobile
+        let lastTap = 0;
+        container.addEventListener('touchend', (e) => {
+            const currentTime = new Date().getTime();
+            const tapLength = currentTime - lastTap;
+            if (tapLength < 300 && tapLength > 0) {
+                // Double tap
+                if (currentZoom === 1.0) {
+                    currentZoom = 1.5;
+                } else {
+                    currentZoom = 1.0;
+                }
+                updateZoom();
             }
-        }, { passive: true });
+            lastTap = currentTime;
+        });
+        
+        // Pinch zoom (simplifié pour mobile)
+        let initialDistance = 0;
+        let initialZoom = 1;
+        
+        container.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 2) {
+                initialDistance = Math.hypot(
+                    e.touches[0].pageX - e.touches[1].pageX,
+                    e.touches[0].pageY - e.touches[1].pageY
+                );
+                initialZoom = currentZoom;
+            }
+        }, {passive: true});
+        
+        container.addEventListener('touchmove', (e) => {
+            if (e.touches.length === 2) {
+                e.preventDefault();
+                const currentDistance = Math.hypot(
+                    e.touches[0].pageX - e.touches[1].pageX,
+                    e.touches[0].pageY - e.touches[1].pageY
+                );
+                const delta = (currentDistance - initialDistance) / 200;
+                currentZoom = Math.max(0.5, Math.min(3.0, initialZoom + delta));
+                updateZoom();
+            }
+        }, {passive: false});
     </script>
 </body>
 </html>
