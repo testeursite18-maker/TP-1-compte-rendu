@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="theme-color" content="#141414">
+    <meta name="theme-color" content="#000000">
     <title>Compte Rendu TP1 - Swethan KALAIRANGAN</title>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
@@ -24,11 +24,173 @@
         
         html, body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--netflix-dark);
+            background: #000;
             color: white;
             height: 100%;
             overflow: hidden;
-            touch-action: pan-x pan-y;
+        }
+        
+        /* === INTRO NETFLIX STYLE === */
+        #intro-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            animation: introFadeOut 1s ease-in-out 3.5s forwards;
+        }
+        
+        .intro-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        
+        /* Barre rouge verticale qui descend (effet Netflix original) */
+        .red-bar {
+            position: absolute;
+            width: 6px;
+            height: 0%;
+            background: var(--netflix-red);
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 0 20px var(--netflix-red);
+            animation: barGrow 0.6s ease-out 0.2s forwards;
+        }
+        
+        @keyframes barGrow {
+            to { height: 120%; }
+        }
+        
+        /* Contenu du logo */
+        .intro-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            opacity: 0;
+            transform: scale(0.8) translateY(20px);
+            animation: logoReveal 0.8s ease-out 0.8s forwards, 
+                       logoZoom 2s ease-in-out 1.5s forwards;
+        }
+        
+        .intro-logo {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 6rem;
+            color: var(--netflix-red);
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            text-shadow: 0 0 30px rgba(229,9,20,0.6);
+            line-height: 0.9;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .intro-logo::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--netflix-red);
+            transform: scaleX(0);
+            animation: lineExpand 0.4s ease-out 1.2s forwards;
+            box-shadow: 0 0 10px var(--netflix-red);
+        }
+        
+        @keyframes lineExpand {
+            to { transform: scaleX(1); }
+        }
+        
+        .intro-subtitle {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.2rem;
+            color: #fff;
+            margin-top: 20px;
+            opacity: 0;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            animation: fadeInUp 0.6s ease-out 1.4s forwards;
+        }
+        
+        /* Flash rouge à la fin */
+        .flash-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--netflix-red);
+            opacity: 0;
+            pointer-events: none;
+            animation: flashEffect 0.3s ease-out 2.8s forwards;
+        }
+        
+        @keyframes logoReveal {
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+        
+        @keyframes logoZoom {
+            0% { transform: scale(1); }
+            100% { 
+                transform: scale(1.5); 
+                opacity: 0;
+                filter: blur(10px);
+            }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 0.8;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes flashEffect {
+            0% { opacity: 0; }
+            50% { opacity: 0.3; }
+            100% { opacity: 0; }
+        }
+        
+        @keyframes introFadeOut {
+            to {
+                opacity: 0;
+                visibility: hidden;
+                pointer-events: none;
+            }
+        }
+        
+        /* === MAIN CONTENT (PDF Viewer) === */
+        #main-content {
+            opacity: 0;
+            animation: mainFadeIn 1s ease-in-out 3.5s forwards;
+            height: 100%;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background: var(--netflix-dark);
+        }
+        
+        @keyframes mainFadeIn {
+            to { opacity: 1; }
         }
         
         /* Header */
@@ -97,7 +259,7 @@
             font-weight: bold;
         }
         
-        /* Controls (Zoom + Download) */
+        /* Controls */
         .header-controls {
             display: flex;
             align-items: center;
@@ -130,10 +292,6 @@
         
         .zoom-btn:hover {
             background: rgba(255,255,255,0.2);
-        }
-        
-        .zoom-btn:active {
-            background: rgba(255,255,255,0.3);
         }
         
         .zoom-level {
@@ -171,6 +329,33 @@
             box-shadow: 0 6px 20px rgba(229,9,20,0.4);
         }
         
+        /* Skip button pour l'intro */
+        .skip-btn {
+            position: absolute;
+            bottom: 40px;
+            right: 40px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            opacity: 0;
+            animation: fadeIn 0.5s ease-out 1s forwards;
+            z-index: 10;
+            transition: all 0.3s;
+        }
+        
+        .skip-btn:hover {
+            background: rgba(255,255,255,0.2);
+            border-color: white;
+        }
+        
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+        
         /* Container PDF */
         #viewer-container {
             margin-top: 0;
@@ -203,11 +388,6 @@
             border-radius: 4px;
             overflow: hidden;
             flex-shrink: 0;
-            transition: box-shadow 0.3s;
-        }
-        
-        .pdf-page:hover {
-            box-shadow: 0 15px 50px rgba(0,0,0,0.9);
         }
         
         /* Loading */
@@ -262,6 +442,16 @@
         
         /* Mobile */
         @media (max-width: 768px) {
+            .intro-logo {
+                font-size: 3.5rem;
+                letter-spacing: 2px;
+            }
+            
+            .intro-subtitle {
+                font-size: 0.9rem;
+                letter-spacing: 4px;
+            }
+            
             #header {
                 height: 75px;
                 padding: 0 3%;
@@ -276,38 +466,29 @@
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 2px;
-                margin-top: 2px;
             }
             
-            .separator {
-                display: none;
-            }
+            .separator { display: none; }
             
-            .zoom-controls {
-                transform: scale(0.9);
-            }
+            .zoom-controls { transform: scale(0.9); }
+            .zoom-level { min-width: 40px; font-size: 12px; }
             
-            .zoom-level {
-                min-width: 40px;
-                font-size: 12px;
-            }
-            
-            .netflix-btn {
-                padding: 8px 14px;
-                font-size: 13px;
-            }
-            
-            .netflix-btn span {
-                display: none;
-            }
+            .netflix-btn { padding: 8px 14px; font-size: 13px; }
+            .netflix-btn span { display: none; }
             
             #pdf-wrapper {
                 padding: 90px 10px 30px 10px;
                 gap: 20px;
             }
+            
+            .skip-btn {
+                bottom: 20px;
+                right: 20px;
+                padding: 6px 12px;
+                font-size: 12px;
+            }
         }
         
-        /* Scrollbar */
         ::-webkit-scrollbar {
             width: 12px;
             height: 12px;
@@ -326,166 +507,172 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #666;
         }
-        
-        ::-webkit-scrollbar-corner {
-            background: var(--netflix-dark);
-        }
     </style>
 </head>
 <body>
 
-    <header id="header">
-        <div class="header-left">
-            <div class="logo">Compte Rendu TP1</div>
-            <div class="student-info">
-                <span class="student-name">KALAIRANGAN Swethan</span>
-                <span class="separator">•</span>
-                <span class="student-id">20236004</span>
+    <!-- INTRO ANIMATION NETFLIX -->
+    <div id="intro-screen">
+        <div class="intro-container">
+            <div class="red-bar"></div>
+            <div class="intro-content">
+                <div class="intro-logo">COMPTE-RENDU TP1</div>
+                <div class="intro-subtitle">KALAIRANGAN Swethan</div>
             </div>
+            <div class="flash-overlay"></div>
+            <button class="skip-btn" onclick="skipIntro()">Passer l'intro</button>
         </div>
-        
-        <div class="header-controls">
-            <div class="zoom-controls">
-                <button class="zoom-btn" onclick="changeZoom(-0.2)" title="Zoom arrière">−</button>
-                <div class="zoom-level" id="zoom-text">100%</div>
-                <button class="zoom-btn" onclick="changeZoom(0.2)" title="Zoom avant">+</button>
+    </div>
+
+    <!-- MAIN CONTENT (PDF Viewer précédent) -->
+    <div id="main-content">
+        <header id="header">
+            <div class="header-left">
+                <div class="logo">Compte Rendu TP1</div>
+                <div class="student-info">
+                    <span class="student-name">KALAIRANGAN Swethan</span>
+                    <span class="separator">•</span>
+                    <span class="student-id">20236004</span>
+                </div>
             </div>
             
-            <a href="TP 1 compte rendu.pdf" download class="netflix-btn">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                    <polyline points="7 10 12 15 17 10"></polyline>
-                    <line x1="12" y1="15" x2="12" y2="3"></line>
-                </svg>
-                <span>Télécharger</span>
+            <div class="header-controls">
+                <div class="zoom-controls">
+                    <button class="zoom-btn" onclick="changeZoom(-0.2)" title="Zoom arrière">−</button>
+                    <div class="zoom-level" id="zoom-text">100%</div>
+                    <button class="zoom-btn" onclick="changeZoom(0.2)" title="Zoom avant">+</button>
+                </div>
+                
+                <a href="TP 1 compte rendu.pdf" download class="netflix-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    <span>Télécharger</span>
+                </a>
+            </div>
+        </header>
+
+        <div id="loading" style="display:none;">
+            <div class="netflix-spinner"></div>
+            <div class="loading-text">Chargement</div>
+        </div>
+
+        <div id="error">
+            <h3>Erreur de chargement</h3>
+            <p>Vérifiez que le fichier PDF est présent</p>
+            <a href="TP 1 compte rendu.pdf" download class="netflix-btn" style="display: inline-flex; margin-top: 15px;">
+                Télécharger
             </a>
         </div>
-    </header>
 
-    <div id="loading">
-        <div class="netflix-spinner"></div>
-        <div class="loading-text">Chargement</div>
-    </div>
-
-    <div id="error">
-        <h3>Erreur de chargement</h3>
-        <p>Vérifiez que le fichier PDF est présent</p>
-        <a href="TP 1 compte rendu.pdf" download class="netflix-btn" style="display: inline-flex; margin-top: 15px;">
-            Télécharger
-        </a>
-    </div>
-
-    <div id="viewer-container">
-        <div id="pdf-wrapper"></div>
+        <div id="viewer-container">
+            <div id="pdf-wrapper"></div>
+        </div>
     </div>
 
     <script>
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        // Variables globales
+        let currentZoom = 1.0;
+        let baseScale = 2.2;
+        let pdfDoc = null;
+        const isMobile = window.innerWidth < 768;
+        if (isMobile) baseScale = 2.5;
         
+        // Configuration PDF.js
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
         const pdfUrl = 'TP 1 compte rendu.pdf';
+        
         const wrapper = document.getElementById('pdf-wrapper');
         const container = document.getElementById('viewer-container');
-        const loading = document.getElementById('loading');
-        const error = document.getElementById('error');
-        const header = document.getElementById('header');
         const zoomText = document.getElementById('zoom-text');
         
-        let currentZoom = 1.0;
-        let baseScale = 2.0; // Scale de base plus grand (anciennement 1.3)
-        let pdfDoc = null;
-        
-        // Détection mobile
-        const isMobile = window.innerWidth < 768;
-        if (isMobile) {
-            baseScale = 2.2; // Encore plus grand sur mobile
+        // SKIP INTRO function
+        function skipIntro() {
+            document.getElementById('intro-screen').style.animation = 'introFadeOut 0.5s ease-in-out forwards';
+            document.getElementById('main-content').style.animation = 'mainFadeIn 0.5s ease-in-out forwards';
+            setTimeout(() => {
+                document.getElementById('intro-screen').style.display = 'none';
+            }, 500);
         }
         
-        // Header scroll effect
-        container.addEventListener('scroll', () => {
-            if (container.scrollTop > 50) {
-                header.classList.add('scrolled');
-            } else {
-                header.classList.remove('scrolled');
-            }
-        });
+        // Initialiser le PDF après l'intro
+        setTimeout(() => {
+            initPDF();
+        }, 3500);
         
-        // Fonction de zoom
-        function changeZoom(delta) {
-            currentZoom += delta;
-            if (currentZoom < 0.5) currentZoom = 0.5;
-            if (currentZoom > 3.0) currentZoom = 3.0;
+        function initPDF() {
+            document.getElementById('loading').style.display = 'block';
             
-            updateZoom();
+            pdfjsLib.getDocument(pdfUrl).promise.then(function(pdf) {
+                pdfDoc = pdf;
+                document.getElementById('loading').style.display = 'none';
+                
+                for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+                    renderPage(pageNum);
+                }
+            }).catch(function(err) {
+                console.error('Erreur:', err);
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('error').style.display = 'block';
+            });
         }
-        
-        function updateZoom() {
-            wrapper.style.transform = `scale(${currentZoom})`;
-            zoomText.textContent = Math.round(currentZoom * 100) + '%';
-            
-            // Ajuster le padding pour éviter les coupures
-            const newPadding = 100 / currentZoom;
-            wrapper.style.paddingTop = (90 / currentZoom) + 'px';
-            wrapper.style.paddingBottom = (50 / currentZoom) + 'px';
-        }
-        
-        // Zoom avec la molette (Ctrl+scroll)
-        container.addEventListener('wheel', (e) => {
-            if (e.ctrlKey || e.metaKey) {
-                e.preventDefault();
-                const delta = e.deltaY > 0 ? -0.1 : 0.1;
-                changeZoom(delta);
-            }
-        });
-        
-        // Chargement PDF
-        pdfjsLib.getDocument(pdfUrl).promise.then(function(pdf) {
-            pdfDoc = pdf;
-            loading.style.display = 'none';
-            
-            const numPages = pdf.numPages;
-            
-            for (let pageNum = 1; pageNum <= numPages; pageNum++) {
-                renderPage(pageNum);
-            }
-        }).catch(function(err) {
-            console.error('Erreur:', err);
-            loading.style.display = 'none';
-            error.style.display = 'block';
-        });
         
         function renderPage(pageNum) {
             pdfDoc.getPage(pageNum).then(function(page) {
                 const viewport = page.getViewport({ scale: baseScale });
-                
                 const canvas = document.createElement('canvas');
                 canvas.className = 'pdf-page';
                 const context = canvas.getContext('2d');
                 
                 canvas.height = viewport.height;
                 canvas.width = viewport.width;
-                
-                // CSS pour la taille d'affichage
                 canvas.style.width = viewport.width + 'px';
                 canvas.style.height = viewport.height + 'px';
-                canvas.style.maxWidth = 'none'; // Permet le dépassement pour zoom
+                canvas.style.maxWidth = 'none';
                 
-                const renderContext = {
+                page.render({
                     canvasContext: context,
                     viewport: viewport
-                };
+                });
                 
-                page.render(renderContext);
                 wrapper.appendChild(canvas);
             });
         }
         
-        // Double-tap pour zoom sur mobile
+        // ZOOM functions
+        function changeZoom(delta) {
+            currentZoom += delta;
+            if (currentZoom < 0.5) currentZoom = 0.5;
+            if (currentZoom > 3.0) currentZoom = 3.0;
+            updateZoom();
+        }
+        
+        function updateZoom() {
+            wrapper.style.transform = `scale(${currentZoom})`;
+            zoomText.textContent = Math.round(currentZoom * 100) + '%';
+            wrapper.style.paddingTop = (90 / currentZoom) + 'px';
+            wrapper.style.paddingBottom = (50 / currentZoom) + 'px';
+        }
+        
+        // Event listeners
+        container.addEventListener('scroll', () => {
+            document.getElementById('header').classList.toggle('scrolled', container.scrollTop > 50);
+        });
+        
+        container.addEventListener('wheel', (e) => {
+            if (e.ctrlKey || e.metaKey) {
+                e.preventDefault();
+                changeZoom(e.deltaY > 0 ? -0.1 : 0.1);
+            }
+        });
+        
+        // Double-tap zoom mobile
         let lastTap = 0;
         container.addEventListener('touchend', (e) => {
             const currentTime = new Date().getTime();
-            const tapLength = currentTime - lastTap;
-            if (tapLength < 300 && tapLength > 0) {
-                // Double tap
+            if (currentTime - lastTap < 300) {
                 if (currentZoom === 1.0) {
                     currentZoom = 1.5;
                 } else {
@@ -496,7 +683,7 @@
             lastTap = currentTime;
         });
         
-        // Pinch zoom (simplifié pour mobile)
+        // Pinch zoom
         let initialDistance = 0;
         let initialZoom = 1;
         
