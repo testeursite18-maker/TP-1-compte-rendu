@@ -2,8 +2,10 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <title>TP 1 Compte Rendu</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -11,17 +13,157 @@
             box-sizing: border-box;
         }
         body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: #525659;
             height: 100vh;
-            width: 100vw;
             overflow: hidden;
         }
-        embed {
+        #header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #333;
+            color: white;
+            padding: 12px;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+        #header h1 {
+            font-size: 16px;
+            font-weight: 500;
+        }
+        #download-btn {
+            background: #007AFF;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            -webkit-tap-highlight-color: transparent;
+        }
+        #pdf-container {
+            margin-top: 50px;
             width: 100%;
-            height: 100%;
+            height: calc(100vh - 50px);
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch; /* Crucial pour iOS */
+            background: #525659;
+            padding: 20px 10px;
+        }
+        .pdf-page {
+            display: block;
+            margin: 0 auto 20px auto;
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            max-width: 100%;
+        }
+        #loading {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 18px;
+            text-align: center;
+        }
+        #error {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            max-width: 90%;
+        }
+        #error a {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 12px 24px;
+            background: #007AFF;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
         }
     </style>
 </head>
 <body>
-    <embed src="TP 1 compte rendu.pdf" type="application/pdf">
+    <div id="header">
+        <h1>TP 1 - Compte Rendu</h1>
+        <a href="TP 1 compte rendu.pdf" download id="download-btn">Télécharger</a>
+    </div>
+    
+    <div id="loading">Chargement...</div>
+    <div id="error">
+        <h3>Impossible d'afficher le PDF</h3>
+        <p>Cliquez ci-dessous pour l'ouvrir :</p>
+        <a href="TP 1 compte rendu.pdf" target="_blank">Ouvrir le PDF</a>
+    </div>
+    
+    <div id="pdf-container"></div>
+
+    <script>
+        // Configuration PDF.js
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        
+        const pdfUrl = 'TP 1 compte rendu.pdf';
+        const container = document.getElementById('pdf-container');
+        const loading = document.getElementById('loading');
+        const error = document.getElementById('error');
+        
+        // Détecter si mobile pour ajuster la qualité
+        const isMobile = window.innerWidth < 768;
+        const scale = isMobile ? 1.2 : 1.5;
+        
+        pdfjsLib.getDocument(pdfUrl).promise.then(function(pdf) {
+            loading.style.display = 'none';
+            
+            const numPages = pdf.numPages;
+            
+            // Charger chaque page
+            for (let pageNum = 1; pageNum <= numPages; pageNum++) {
+                pdf.getPage(pageNum).then(function(page) {
+                    const viewport = page.getViewport({ scale: scale });
+                    
+                    const canvas = document.createElement('canvas');
+                    canvas.className = 'pdf-page';
+                    const context = canvas.getContext('2d');
+                    
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+                    
+                    // Hauteur CSS pour responsive
+                    canvas.style.width = isMobile ? '100%' : 'auto';
+                    canvas.style.maxWidth = '100%';
+                    
+                    const renderContext = {
+                        canvasContext: context,
+                        viewport: viewport
+                    };
+                    
+                    page.render(renderContext);
+                    container.appendChild(canvas);
+                });
+            }
+        }).catch(function(err) {
+            console.error('Erreur PDF:', err);
+            loading.style.display = 'none';
+            error.style.display = 'block';
+        });
+        
+        // Gestion du touch sur mobile pour scroll fluide
+        container.addEventListener('touchstart', function(){}, {passive: true});
+    </script>
 </body>
 </html>
